@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const showLoginLink = document.getElementById('show-login');
     const loginMessageModal = document.getElementById('login-message-modal');
 
+
     const API_BASE_URL = 'https://MovieSearch.cfapps.us10-001.hana.ondemand.com'; // Replace with your backend base URL
     const CLIENT_ID = 'sb-na-20e3ce3b-94a8-412b-ae95-e3e44623bf39!t292265'; // Replace with your XSUAA client ID
     const CLIENT_SECRET = 'yKZJl9AELfxltYhL+PcgK2lVGBw='; // Replace with your XSUAA client secret
@@ -21,7 +22,9 @@ document.addEventListener('DOMContentLoaded', function() {
         return fetch(TOKEN_URL, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
+                'Content-Type': 'application/x-www-form-urlencoded',
+                
+                
             },
             body: body
         })
@@ -38,19 +41,33 @@ document.addEventListener('DOMContentLoaded', function() {
     // Call fetchAccessToken on page load
     fetchAccessToken();
 
+    // Show signup page when "Sign Up" link is clicked
+    showSignupLink.addEventListener('click', function() {
+        loginPage.style.display = 'none';
+        signupPage.style.display = 'block';
+    });
+
+    // Show login page when "Login" link is clicked
+    showLoginLink.addEventListener('click', function() {
+        signupPage.style.display = 'none';
+        loginPage.style.display = 'block';
+    });
+
     // Send OTP when "Send OTP" button is clicked
     sendOTPButton.addEventListener('click', function() {
         const email = document.getElementById('signup-email').value;
         const password = document.getElementById('signup-password').value;
 
-        fetch(`${API_BASE_URL}/sendOtp`, {
+        // Replace with your actual API endpoint and handle response accordingly
+        fetch('https://MovieSearch.cfapps.us10-001.hana.ondemand.com/sendOtp', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${accessToken}`
+
             },
             body: JSON.stringify({
-                email: email,
+                name: email,
                 password: password
             })
         })
@@ -75,7 +92,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const password = document.getElementById('signup-password').value;
         const otp = document.getElementById('otp-input').value;
 
-        fetch(`${API_BASE_URL}/verifyOtp?otp=${otp}`, {
+        // Replace with your actual API endpoint and handle response accordingly
+        fetch(`https://MovieSearch.cfapps.us10-001.hana.ondemand.com/verifyOtp?otp=${otp}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -103,7 +121,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const email = document.getElementById('login-email').value;
         const password = document.getElementById('login-password').value;
 
-        fetch(`${API_BASE_URL}/login`, {
+        // Replace with your actual API endpoint and handle response accordingly
+        fetch('https://MovieSearch.cfapps.us10-001.hana.ondemand.com/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
