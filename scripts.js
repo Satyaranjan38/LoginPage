@@ -8,31 +8,49 @@ document.addEventListener('DOMContentLoaded', function() {
     const showLoginLink = document.getElementById('show-login');
     const loginMessageModal = document.getElementById('login-message-modal');
 
-    // Show signup page when "Sign Up" link is clicked
-    showSignupLink.addEventListener('click', function() {
-        loginPage.style.display = 'none';
-        signupPage.style.display = 'block';
-    });
+    const API_BASE_URL = 'https://MovieSearch.cfapps.us10-001.hana.ondemand.com'; // Replace with your backend base URL
+    const CLIENT_ID = 'sb-na-20e3ce3b-94a8-412b-ae95-e3e44623bf39!t292265'; // Replace with your XSUAA client ID
+    const CLIENT_SECRET = 'yKZJl9AELfxltYhL+PcgK2lVGBw='; // Replace with your XSUAA client secret
+    const TOKEN_URL = 'https://10db0aa4trial.authentication.us10.hana.ondemand.com/oauth/token'; // Replace with your XSUAA token URL
 
-    // Show login page when "Login" link is clicked
-    showLoginLink.addEventListener('click', function() {
-        signupPage.style.display = 'none';
-        loginPage.style.display = 'block';
-    });
+    let accessToken = null;
+
+    // Function to fetch access token from XSUAA
+    function fetchAccessToken() {
+        const body = `grant_type=client_credentials&client_id=${CLIENT_ID}&client_secret=${encodeURIComponent(CLIENT_SECRET)}`;
+        return fetch(TOKEN_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: body
+        })
+        .then(response => response.json())
+        .then(data => {
+            accessToken = data.access_token;
+            console.log('Access Token:', accessToken);
+        })
+        .catch(error => {
+            console.error('Error fetching access token:', error);
+        });
+    }
+
+    // Call fetchAccessToken on page load
+    fetchAccessToken();
 
     // Send OTP when "Send OTP" button is clicked
     sendOTPButton.addEventListener('click', function() {
         const email = document.getElementById('signup-email').value;
         const password = document.getElementById('signup-password').value;
 
-        // Replace with your actual API endpoint and handle response accordingly
-        fetch('https://MovieSearch.cfapps.us10-001.hana.ondemand.com/sendOtp', {
+        fetch(`${API_BASE_URL}/sendOtp`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${accessToken}`
             },
             body: JSON.stringify({
-                name: email,
+                email: email,
                 password: password
             })
         })
@@ -57,11 +75,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const password = document.getElementById('signup-password').value;
         const otp = document.getElementById('otp-input').value;
 
-        // Replace with your actual API endpoint and handle response accordingly
-        fetch(`https://MovieSearch.cfapps.us10-001.hana.ondemand.com/verifyOtp?otp=${otp}`, {
+        fetch(`${API_BASE_URL}/verifyOtp?otp=${otp}`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${accessToken}`
             },
             body: JSON.stringify({
                 name: email,
@@ -85,11 +103,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const email = document.getElementById('login-email').value;
         const password = document.getElementById('login-password').value;
 
-        // Replace with your actual API endpoint and handle response accordingly
-        fetch('https://MovieSearch.cfapps.us10-001.hana.ondemand.com/login', {
+        fetch(`${API_BASE_URL}/login`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${accessToken}`
             },
             body: JSON.stringify({
                 name: email,
