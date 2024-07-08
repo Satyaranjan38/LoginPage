@@ -57,13 +57,14 @@ document.addEventListener('DOMContentLoaded', function() {
     sendOTPButton.addEventListener('click', function() {
         const email = document.getElementById('signup-email').value;
         const password = document.getElementById('signup-password').value;
+        startOTPTimer();
 
         // Replace with your actual API endpoint and handle response accordingly
         fetch('https://MovieSearch.cfapps.us10-001.hana.ondemand.com/sendOtp', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${accessToken}`
+                 'Authorization': `Bearer ${accessToken}`
 
             },
             body: JSON.stringify({
@@ -78,6 +79,8 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             console.log(data); // Handle success or display message to user
             document.getElementById('otp-section').style.display = 'block';
+
+            
             sendOTPButton.textContent = 'Send OTP'; // Reset button text on success
         })
         .catch(error => {
@@ -85,6 +88,24 @@ document.addEventListener('DOMContentLoaded', function() {
             sendOTPButton.textContent = 'Send OTP'; // Reset button text on error
         });
     });
+
+
+    function startOTPTimer() {
+        let timer = 120;
+        sendOTPButton.disabled = true;
+        sendOTPButton.classList.add('disabled');
+        const interval = setInterval(() => {
+            if (timer > 0) {
+                timer--;
+                sendOTPButton.textContent = `Send OTP (${timer}s)`;
+            } else {
+                clearInterval(interval);
+                sendOTPButton.disabled = false;
+                sendOTPButton.classList.remove('disabled');
+                sendOTPButton.textContent = 'Send OTP';
+            }
+        }, 1000);
+    }
 
     // Verify OTP when "Verify OTP" button is clicked
     verifyOTPButton.addEventListener('click', function() {
