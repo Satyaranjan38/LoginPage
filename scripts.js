@@ -14,7 +14,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const CLIENT_SECRET = 'yKZJl9AELfxltYhL+PcgK2lVGBw='; // Replace with your XSUAA client secret
     const TOKEN_URL = 'https://10db0aa4trial.authentication.us10.hana.ondemand.com/oauth/token'; // Replace with your XSUAA token URL
 
-    let accessToken = null;
+    let accessToken = getCookie('accessToken'); // Get the token from cookies
+
+    // If token exists in cookies, redirect to the main application
+    if (accessToken) {
+        redirectToMovieSearch();
+    } else {
+        fetchAccessToken(); // Call fetchAccessToken on page load if no token
+    }
 
     // Function to fetch access token from XSUAA
     function fetchAccessToken() {
@@ -31,6 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             accessToken = data.access_token;
+            setCookie('accessToken', accessToken, 15); // Save token in cookies for 1 day
             console.log('Access Token:', accessToken);
         })
         .catch(error => {
@@ -158,6 +166,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             console.log(data); // Handle success or display message to user
             if (data.message === 'login successfully') {
+                setCookie('accessToken', accessToken, 15);
                 redirectToMovieSearch(); // After successful login, redirect to MovieSearch
             } else {
                 showLoginFailedMessage(data.message || 'Login failed. Please check your credentials and try again.');
@@ -195,6 +204,28 @@ document.addEventListener('DOMContentLoaded', function() {
         loginPage.style.display = 'block';
         signupPage.style.display = 'none';
     }
+    function setCookie(name, value, days) {
+        const d = new Date();
+        d.setTime(d.getTime() + (days*60*1000));
+        const expires = "expires=" + d.toUTCString();
+        document.cookie = name + "=" + value + ";" + expires + ";path=/";
+    }
+    
+    function getCookie(name) {
+        const nameEQ = name + "=";
+        const ca = document.cookie.split(';');
+        for(let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1, c.length);
+            }
+            if (c.indexOf(nameEQ) == 0) {
+                return c.substring(nameEQ.length, c.length);
+            }
+        }
+        return null;
+    }
+    
 
     function redirectToMovieSearch() {
         window.location.href = 'https://satyaranjan38.github.io/MovieSearch/';
