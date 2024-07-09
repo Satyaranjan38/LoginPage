@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             accessToken = data.access_token;
-            setCookie('accessToken', accessToken, 15); // Save token in cookies for 1 day
+            setCookie('accessToken', accessToken, 120); // Save token in cookies for 1 day
             console.log('Access Token:', accessToken);
         })
         .catch(error => {
@@ -166,7 +166,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             console.log(data); // Handle success or display message to user
             if (data.message === 'login successfully') {
-                setCookie('accessToken', accessToken, 15);
+                setCookie('accessToken', accessToken, 120);
                 localStorage.setItem('userName' , email) ; 
                 redirectToMovieSearch(); // After successful login, redirect to MovieSearch
             } else {
