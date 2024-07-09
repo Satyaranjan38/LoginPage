@@ -167,6 +167,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log(data); // Handle success or display message to user
             if (data.message === 'login successfully') {
                 setCookie('accessToken', accessToken, 15);
+                localStorage.setItem('userName' , email) ; 
                 redirectToMovieSearch(); // After successful login, redirect to MovieSearch
             } else {
                 showLoginFailedMessage(data.message || 'Login failed. Please check your credentials and try again.');
@@ -228,6 +229,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
 
     function redirectToMovieSearch() {
+       
         window.location.href = 'https://satyaranjan38.github.io/MovieSearch/';
+        // window.location.href = 'http://127.0.0.1:5500/MovieSearch/'
     }
 });
