@@ -38,7 +38,8 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             accessToken = data.access_token;
-            setCookie('accessToken', accessToken, 120); // Save token in cookies for 1 day
+            setCookie('accessToken', accessToken, 120); 
+            localStorage.setItem('oauthToken' , accessToken)// Save token in cookies for 1 day
             console.log('Access Token:', accessToken);
         })
         .catch(error => {
