@@ -10,9 +10,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     const API_BASE_URL = 'https://MovieSearch.cfapps.us10-001.hana.ondemand.com'; // Replace with your backend base URL
-    const CLIENT_ID = 'sb-na-20e3ce3b-94a8-412b-ae95-e3e44623bf39!t292265'; // Replace with your XSUAA client ID
-    const CLIENT_SECRET = 'yKZJl9AELfxltYhL+PcgK2lVGBw='; // Replace with your XSUAA client secret
-    const TOKEN_URL = 'https://10db0aa4trial.authentication.us10.hana.ondemand.com/oauth/token'; // Replace with your XSUAA token URL
+    const CLIENT_ID = 'sb-na-3763d269-8272-4902-8ea4-21723882f1c7!t308628'; // Replace with your XSUAA client ID
+    const CLIENT_SECRET = 'PoDxFeCXfWYmlfluThhpUUd6Uwo='; // Replace with your XSUAA client secret
+    const TOKEN_URL = 'https://cee938d6trial.authentication.us10.hana.ondemand.com/oauth/token'; // Replace with your XSUAA token URL
 
     let accessToken = getCookie('accessToken'); // Get the token from cookies
 
