@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (accessToken) {
         redirectToMovieSearch();
     } else {
-        fetchAccessToken(); // Call fetchAccessToken on page load if no token
+        // fetchAccessToken(); // Call fetchAccessToken on page load if no token
     }
 
     // Function to fetch access token from XSUAA
