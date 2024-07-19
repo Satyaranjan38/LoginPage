@@ -15,16 +15,6 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     let accessToken = getCookie('accessToken'); // Get the token from cookies
 
-    // If token does not exist in cookies, fetch it
-    if (!accessToken) {
-        accessToken = await fetchAccessToken();
-    }
-
-    // If token exists after fetching or retrieving from cookies, redirect to the main application
-    if (accessToken) {
-        redirectToMovieSearch();
-    }
-
     // Function to fetch access token from XSUAA
     async function fetchAccessToken() {
         const body = `grant_type=client_credentials&client_id=${CLIENT_ID}&client_secret=${encodeURIComponent(CLIENT_SECRET)}`;
@@ -46,6 +36,15 @@ document.addEventListener('DOMContentLoaded', async function() {
             console.error('Error fetching access token:', error);
             return null;
         }
+    }
+
+    if (!accessToken) {
+        accessToken = await fetchAccessToken();
+    }
+
+    // If token exists after fetching or retrieving from cookies, redirect to the main application
+    if (accessToken) {
+        redirectToMovieSearch();
     }
 
     // Show signup page when "Sign Up" link is clicked
@@ -201,9 +200,9 @@ document.addEventListener('DOMContentLoaded', async function() {
         signupPage.style.display = 'none';
     }
 
-    function setCookie(name, value, days) {
+    function setCookie(name, value, minutes) {
         const d = new Date();
-        d.setTime(d.getTime() + (days*60*1000));
+        d.setTime(d.getTime() + (minutes*60*1000));
         const expires = "expires=" + d.toUTCString();
         document.cookie = name + "=" + value + ";" + expires + ";path=/";
     }
@@ -213,10 +212,10 @@ document.addEventListener('DOMContentLoaded', async function() {
         const ca = document.cookie.split(';');
         for(let i = 0; i < ca.length; i++) {
             let c = ca[i];
-            while (c.charAt(0) == ' ') {
+            while (c.charAt(0) === ' ') {
                 c = c.substring(1, c.length);
             }
-            if (c.indexOf(nameEQ) == 0) {
+            if (c.indexOf(nameEQ) === 0) {
                 return c.substring(nameEQ.length, c.length);
             }
         }
