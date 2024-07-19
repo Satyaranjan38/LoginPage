@@ -1,3 +1,17 @@
+
+function showLoader() {
+    const loader = document.getElementById('loader');
+    loader.classList.add('active');
+    loader.style.display = 'flex';
+}
+
+// Function to hide the loader
+function hideLoader() {
+    const loader = document.getElementById('loader');
+    loader.classList.remove('active');
+    loader.style.display = 'none';
+}
+
 document.addEventListener('DOMContentLoaded',async function() {
     const loginPage = document.getElementById('login-page');
     const signupPage = document.getElementById('signup-page');
@@ -7,6 +21,16 @@ document.addEventListener('DOMContentLoaded',async function() {
     const showSignupLink = document.getElementById('show-signup');
     const showLoginLink = document.getElementById('show-login');
     const loginMessageModal = document.getElementById('login-message-modal');
+
+    const loader = document.getElementById('loader');
+    const content = document.querySelector('.container');
+
+    showLoader() ; 
+
+    // Hide loader and show content when the page has fully loaded
+    window.addEventListener('load', () => {
+        hideLoader() ; 
+    });
 
     const API_BASE_URL = 'https://MovieSearch.cfapps.us10-001.hana.ondemand.com'; // Replace with your backend base URL
     const CLIENT_ID = 'sb-na-3763d269-8272-4902-8ea4-21723882f1c7!t308628'; // Replace with your XSUAA client ID
@@ -105,7 +129,7 @@ document.addEventListener('DOMContentLoaded',async function() {
         const email = document.getElementById('signup-email').value;
         const password = document.getElementById('signup-password').value;
         startOTPTimer();
-
+        showLoader();
         // Replace with your actual API endpoint and handle response accordingly
         fetch(`${API_BASE_URL}/sendOtp`, {
             method: 'POST',
@@ -120,6 +144,7 @@ document.addEventListener('DOMContentLoaded',async function() {
         })
         .then(response => {
             sendOTPButton.textContent = 'Sending...'; // Show loading text
+            hideLoader();
             return response.json();
         })
         .then(data => {
@@ -129,6 +154,7 @@ document.addEventListener('DOMContentLoaded',async function() {
         })
         .catch(error => {
             console.error('Error sending OTP:', error);
+            hideLoader();
             sendOTPButton.textContent = 'Send OTP'; // Reset button text on error
         });
     });
@@ -155,7 +181,7 @@ document.addEventListener('DOMContentLoaded',async function() {
         const email = document.getElementById('signup-email').value;
         const password = document.getElementById('signup-password').value;
         const otp = document.getElementById('otp-input').value;
-
+        showLoader();
         // Replace with your actual API endpoint and handle response accordingly
         fetch(`${API_BASE_URL}/verifyOtp?otp=${otp}`, {
             method: 'POST',
@@ -170,12 +196,14 @@ document.addEventListener('DOMContentLoaded',async function() {
         })
         .then(response => response.json())
         .then(data => {
+            hideLoader();
             console.log(data); // Handle success or display message to user
             if (data.message === 'sign up sucessfully') {
                 showLoginPage(); // After successful verification, show login page
             }
         })
         .catch(error => {
+            hideLoader();
             console.error('Error verifying OTP:', error);
         });
     });
@@ -184,7 +212,7 @@ document.addEventListener('DOMContentLoaded',async function() {
     loginButton.addEventListener('click', function() {
         const email = document.getElementById('login-email').value;
         const password = document.getElementById('login-password').value;
-
+        showLoader();
         // Replace with your actual API endpoint and handle response accordingly
         fetch(`${API_BASE_URL}/login`, {
             method: 'POST',
@@ -203,12 +231,15 @@ document.addEventListener('DOMContentLoaded',async function() {
             if (data.message === 'login successfully') {
                 setCookie('accessToken', accessToken, 120);
                 localStorage.setItem('userName', email);
+                hideLoader();
                 redirectToMovieSearch(); // After successful login, redirect to MovieSearch
             } else {
+                hideLoader();
                 showLoginFailedMessage(data.message || 'Login failed. Please check your credentials and try again.');
             }
         })
         .catch(error => {
+            hideLoader();
             console.error('Error logging in:', error);
             showLoginFailedMessage('An error occurred. Please try again later.');
         });
@@ -264,7 +295,7 @@ document.addEventListener('DOMContentLoaded',async function() {
     }
 
     function redirectToMovieSearch() {
-        window.location.href = 'https://satyaranjan38.github.io/MovieSearch/';
+        // window.location.href = 'https://satyaranjan38.github.io/MovieSearch/';
         // window.location.href = 'http://127.0.0.1:5500/MovieSearch/'
     }
 });
