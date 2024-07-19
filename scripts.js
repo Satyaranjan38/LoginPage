@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             console.log(data); // Handle success or display message to user
-            if (data.message === 'user is valid') {
+            if (data.message === 'sign up sucessfully') {
                 showLoginPage(); // After successful verification, show login page
             }
         })
