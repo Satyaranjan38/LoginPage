@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded',async function() {
     const loginPage = document.getElementById('login-page');
     const signupPage = document.getElementById('signup-page');
     const loginButton = document.getElementById('login-button');
@@ -13,17 +13,48 @@ document.addEventListener('DOMContentLoaded', function() {
     const CLIENT_SECRET = 'PoDxFeCXfWYmlfluThhpUUd6Uwo='; // Replace with your XSUAA client secret
     const TOKEN_URL = 'https://cee938d6trial.authentication.us10.hana.ondemand.com/oauth/token'; // Replace with your XSUAA token URL
 
-    let accessToken = getCookie('accessToken'); // Get the token from cookies
+    let accessToken = localStorage.getItem('oauthToken') // Get the token from localstorage 
+    const isAuthorized = await checkAuthorization(demoApiUrl);
+    
 
-    // If token exists in cookies, redirect to the main application
-    if (accessToken) {
-        redirectToMovieSearch();
-    } else {
-        // fetchAccessToken(); // Call fetchAccessToken on page load if no token
+    if (!isAuthorized) {
+        clearCookiesAndLocalStorage();
+        console.log("not authorized ") ; 
+        await fetchAccessToken() ; 
+        
     }
 
+    async function checkAuthorization(url) {
+        const token = localStorage.getItem('oauthToken');
+        try {
+            const response = await fetch(url, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+    
+            if (response.status === 401) {
+                return false; // Unauthorized
+            }
+    
+            return true; // Authorized
+        } catch (error) {
+            console.error('Error checking authorization:', error);
+            return false; // Assume unauthorized on error
+        }
+    }
+
+
+    // If token exists in cookies, redirect to the main application
+    // if (accessToken) {
+    //     redirectToMovieSearch();
+    // } else {
+    //     fetchAccessToken(); // Call fetchAccessToken on page load if no token
+    // }
+
     // Function to fetch access token from XSUAA
-    function  fetchAccessToken() {
+    async function  fetchAccessToken() {
         const body = `grant_type=client_credentials&client_id=${CLIENT_ID}&client_secret=${encodeURIComponent(CLIENT_SECRET)}`;
         return fetch(TOKEN_URL, {
             method: 'POST',
@@ -42,6 +73,19 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => {
             console.error('Error fetching access token:', error);
         });
+    }
+
+
+    function clearCookiesAndLocalStorage() {
+        // Clear cookies
+        document.cookie.split(";").forEach(cookie => {
+            const eqPos = cookie.indexOf("=");
+            const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+            document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';
+        });
+    
+        // Clear localStorage
+        localStorage.clear();
     }
 
     // Show signup page when "Sign Up" link is clicked
@@ -224,3 +268,6 @@ document.addEventListener('DOMContentLoaded', function() {
         // window.location.href = 'http://127.0.0.1:5500/MovieSearch/'
     }
 });
+
+
+
