@@ -295,7 +295,7 @@ document.addEventListener('DOMContentLoaded',async function() {
     }
 
     function redirectToMovieSearch() {
-        // window.location.href = 'https://satyaranjan38.github.io/MovieSearch/';
+         window.location.href = 'https://satyaranjan38.github.io/MovieSearch/';
         // window.location.href = 'http://127.0.0.1:5500/MovieSearch/'
     }
 });
