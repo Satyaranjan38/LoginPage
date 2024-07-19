@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', async function() {
+document.addEventListener('DOMContentLoaded', function() {
     const loginPage = document.getElementById('login-page');
     const signupPage = document.getElementById('signup-page');
     const loginButton = document.getElementById('login-button');
@@ -15,36 +15,33 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     let accessToken = getCookie('accessToken'); // Get the token from cookies
 
+    // If token exists in cookies, redirect to the main application
+    if (accessToken) {
+        redirectToMovieSearch();
+    } else {
+        fetchAccessToken(); // Call fetchAccessToken on page load if no token
+    }
+
     // Function to fetch access token from XSUAA
-    async function fetchAccessToken() {
+    function  fetchAccessToken() {
         const body = `grant_type=client_credentials&client_id=${CLIENT_ID}&client_secret=${encodeURIComponent(CLIENT_SECRET)}`;
-        try {
-            const response = await fetch(TOKEN_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: body
-            });
-            const data = await response.json();
+        return fetch(TOKEN_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: body
+        })
+        .then(response => response.json())
+        .then(data => {
             accessToken = data.access_token;
             setCookie('accessToken', accessToken, 120); 
             localStorage.setItem('oauthToken', accessToken); // Save token in cookies for 1 day
             console.log('Access Token:', accessToken);
-            return accessToken;
-        } catch (error) {
+        })
+        .catch(error => {
             console.error('Error fetching access token:', error);
-            return null;
-        }
-    }
-
-    if (!accessToken) {
-        accessToken = await fetchAccessToken();
-    }
-
-    // If token exists after fetching or retrieving from cookies, redirect to the main application
-    if (accessToken) {
-        redirectToMovieSearch();
+        });
     }
 
     // Show signup page when "Sign Up" link is clicked
@@ -200,9 +197,9 @@ document.addEventListener('DOMContentLoaded', async function() {
         signupPage.style.display = 'none';
     }
 
-    function setCookie(name, value, minutes) {
+    function setCookie(name, value, days) {
         const d = new Date();
-        d.setTime(d.getTime() + (minutes*60*1000));
+        d.setTime(d.getTime() + (days*60*1000));
         const expires = "expires=" + d.toUTCString();
         document.cookie = name + "=" + value + ";" + expires + ";path=/";
     }
@@ -212,10 +209,10 @@ document.addEventListener('DOMContentLoaded', async function() {
         const ca = document.cookie.split(';');
         for(let i = 0; i < ca.length; i++) {
             let c = ca[i];
-            while (c.charAt(0) === ' ') {
+            while (c.charAt(0) == ' ') {
                 c = c.substring(1, c.length);
             }
-            if (c.indexOf(nameEQ) === 0) {
+            if (c.indexOf(nameEQ) == 0) {
                 return c.substring(nameEQ.length, c.length);
             }
         }
