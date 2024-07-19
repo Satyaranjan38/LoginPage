@@ -39,6 +39,10 @@ document.addEventListener('DOMContentLoaded',async function() {
     const demoApiUrl = 'https://MovieSearch.cfapps.us10-001.hana.ondemand.com/HelloWorld/satya';
     let accessToken = localStorage.getItem('oauthToken') // Get the token from localstorage 
     const isAuthorized = await checkAuthorization(demoApiUrl);
+
+    if(isAuthorized){
+        redirectToMovieSearch();
+    }
     
 
     if (!isAuthorized) {
